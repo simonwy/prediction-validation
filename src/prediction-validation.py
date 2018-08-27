@@ -2,10 +2,10 @@ import collections
 import sys
 
 
-INPUT_ACTUAL_PATH = 'actual.txt'
-INPUT_PREDICTED_PATH = 'predicted.txt'
-INPUT_WINDOW_PATH = 'window.txt'
-OUTPUT_COMPARISON_PATH = 'comparison.txt'
+INPUT_ACTUAL_PATH = './input/actual.txt'
+INPUT_PREDICTED_PATH = './input/predicted.txt'
+INPUT_WINDOW_PATH = './input/window.txt'
+OUTPUT_COMPARISON_PATH = './output/comparison.txt'
 
 
 class HourStats(object):
