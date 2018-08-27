@@ -60,7 +60,7 @@ while i < len(actual):
             cnt += 1
 
     if len(sliding_window_stats) == window:
-        avg_err = round(total + 0.001, 2) / count if count != 0 else -1
+        avg_err = round(total / count + 0.001, 2) if count != 0 else -1
         output.append(avg_err)
         stats = sliding_window_stats.popleft()
         total -= stats.total_errs
