@@ -84,5 +84,6 @@ with open(OUTPUT_COMPARISON_PATH, 'w') as comparison_file:
             line += 'NA'
         else:
             #line += str(round(avg_err * 100 / 100.0, 2))
-            line += '%.2f' % avg_err
+            #line += '%.2f' % avg_err
+            line += '{:0.2f}'.format(avg_err)
         comparison_file.write(line + '\n')
