@@ -60,6 +60,7 @@ while i < len(actual):
             cnt += 1
 
     if len(sliding_window_stats) == window:
+        #avg_err = round(total / count, 2) if count != 0 else -1
         avg_err = round((total * 100 / count) / 100.0, 2) if count != 0 else -1
 	output.append(avg_err)
         stats = sliding_window_stats.popleft()
@@ -82,5 +83,6 @@ with open(OUTPUT_COMPARISON_PATH, 'w') as comparison_file:
         if avg_err == -1:
             line += 'NA'
         else:
-            line += '%.2f' % avg_err
+            line += str(round(avg_err, 2))
+            #line += '%.2f' % avg_err
         comparison_file.write(line + '\n')
