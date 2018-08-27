@@ -73,7 +73,7 @@ while i < len(actual):
 
     n += 1
 
-avg_err = round(total  / count * 100 / 100.0, 2)  if count != 0 else -1
+avg_err = round(total  / count * 1000 / 1000.00, 3)  if count != 0 else -1
 output.append(avg_err)
 
 
