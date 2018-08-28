@@ -1,79 +1,91 @@
 import collections
 import sys
 
-
 INPUT_ACTUAL_PATH = './input/actual.txt'
 INPUT_PREDICTED_PATH = './input/predicted.txt'
 INPUT_WINDOW_PATH = './input/window.txt'
 OUTPUT_COMPARISON_PATH = './output/comparison.txt'
 
 
+
+# Define Object class for per HourStats (including calculated error_sum and error_count)
 class HourStats(object):
+    def __init__(self, error_sum, error_count):
+        self.error_sum = error_sum
+        self.error_count = error_count
 
-    def __init__(self, total_errs, count):
-        self.total_errs = total_errs
-        self.count = count
 
-def GetStockPricesInHour(data, index, hour):
-    stock_to_price = {}
-    while index < len(data):
-        d = data[index].strip()
-        if not d:
+
+# Define GetPricesAtHour, return stock_price array and its index
+def GetPricesAtHour(source, index, hour):
+    stock_price = {}
+    while index < len(source):
+        item = source[index].strip()
+        if not item: # to deal with edge case of NULL item
             index += 1
             continue
-
-        h, name, price = d.split('|')
-        if int(h) == hour:
-            stock_to_price[name] = float(price)
+	    
+        hr, name, price = item.split('|')
+        if int(hr) == hour:
+            stock_price[name] = float(price)
             index += 1
             continue
-        break
-    return stock_to_price, index
+        break # quit function earlier in case the interested hour completed
+    return stock_price, index
+
 
 
 with open(INPUT_WINDOW_PATH, 'r') as window_file:
     window = int(window_file.read().strip())
 
 with open(INPUT_ACTUAL_PATH, 'r') as actual_file:
-    actual = actual_file.readlines()
+    sourceActual = actual_file.readlines()
 
 with open(INPUT_PREDICTED_PATH, 'r') as predicted_file:
-    predicted = predicted_file.readlines()
+    sourcePredicted = predicted_file.readlines()
 
+
+
+# Using sliding_window to calculate the errors by a given window size
+# use a deque to implement the sliding_window for better efficiency
 sliding_window_stats = collections.deque()
 output = []
-stock_to_price = {}
-i = j = 0
-n = 1
+stock_price = {}
+actIdx = preIdx = 0
+hr = 1	# starting hour
 total = 0
 count = 0
 
-while i < len(actual):
-    actual_prices, i = GetStockPricesInHour(actual, i, n)
-    predicted_prices, j = GetStockPricesInHour(predicted, j, n)
+
+while actIdx < len(sourceActual):
+    actual_prices, actIdx = GetPricesAtHour(sourceActual, actIdx, hr)
+    predicted_prices, preIdx = GetPricesAtHour(sourcePredicted, preIdx, hr)
     total_errs = 0
     cnt = 0
 
+    # calculate each matching error's sum and maitain its count
     for name, price in predicted_prices.items():
         if actual_prices[name]:
             total_errs += abs(price - actual_prices[name])
             cnt += 1
-
+    
+    # use a sliding_window to maintain and update the calculated errors in given window
     if len(sliding_window_stats) == window:
         #avg_err = round(total / count, 2) if count != 0 else -1
-        avg_err = round((total * 1000 / count) / 1000.00, 3) if count != 0 else -1
+        avg_err = (total * 1000.0 / count) / 1000.0 if count != 0 else -1
 	output.append(avg_err)
         stats = sliding_window_stats.popleft()
-        total -= stats.total_errs
-        count -= stats.count
+        total -= stats.error_sum
+        count -= stats.error_count
 
     total += total_errs
     count += cnt
     sliding_window_stats.append(HourStats(total_errs, cnt))
 
-    n += 1
+    hr += 1
 
-avg_err = round(total  / count * 1000 / 1000.00, 3)  if count != 0 else -1
+
+avg_err = (total * 1000.0  / count) / 1000.00  if count != 0 else -1
 output.append(avg_err)
 
 
