@@ -72,7 +72,7 @@ while actIdx < len(sourceActual):
     # use a sliding_window to maintain and update the calculated errors in given window
     if len(sliding_window_stats) == window:
         #avg_err = round(total / count, 2) if count != 0 else -1
-        avg_err = (total * 1000.0 / count) / 1000.0 if count != 0 else -1
+        avg_err = total / float(count) if count != 0 else -1
 	output.append(avg_err)
         stats = sliding_window_stats.popleft()
         total -= stats.error_sum
@@ -85,7 +85,7 @@ while actIdx < len(sourceActual):
     hr += 1
 
 
-avg_err = (total * 1000.0  / count) / 1000.00  if count != 0 else -1
+avg_err = total / float(count)  if count != 0 else -1
 output.append(avg_err)
 
 
